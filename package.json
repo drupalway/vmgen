@@ -9,6 +9,10 @@
   "bin": {
     "vmgen": "app/scripts/index.js"
   },
+  "repositoty": {
+    "type": "git",
+    "url" : "https://github.com/drupalway/vmgen.git"
+  },
   "author": "Valentine Matsveiko",
   "license": "GPL-3.0",
   "dependencies": {
