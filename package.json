@@ -1,6 +1,6 @@
 {
   "name": "vmgen",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lightweight VM generator for Drupal development",
   "main": "app/scripts/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repositoty": {
     "type": "git",
-    "url" : "https://github.com/drupalway/vmgen.git"
+    "url": "https://github.com/drupalway/vmgen.git"
   },
   "author": "Valentine Matsveiko",
   "license": "GPL-3.0",
