@@ -12,6 +12,7 @@ VM generator powered by Vagrant, Ansible, Node.js and DrupalVM
 6. NodeJS(npm):
   For Ubuntu - http://tecadmin.net/install-latest-nodejs-npm-on-ubuntu/
   For OSX - `brew install node`
+
 # Installation:
 1. Install the vmgen package in your system - `npm install -g vmgen`
 2. Create directory 'projects' at your home('~') directory, so it's should be "~/projects/"
