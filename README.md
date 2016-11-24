@@ -1,5 +1,7 @@
 VM generator powered by Vagrant, Ansible, Node.js and DrupalVM
 ==============================================================
+# Description
+A node.js based generator to simplify the creation of VM instance for Drupal development using Vagrant, Ansible, and DrupalVM.
 
 # Requirements:
 1. Unix-based OS(tested on Ubuntu and OS X)
