@@ -9,8 +9,8 @@ A node.js based generator to simplify the creation of VM instance for Drupal dev
 3. VirtualBox
 4. Ansible
 5. Vagrant plugins:
-5.1. hostsupdater (`vagrant plugin install vagrant-hostsupdater`)
-5.2. auto_network (`vagrant plugin install vagrant-auto_network`)
+  * hostsupdater (`vagrant plugin install vagrant-hostsupdater`)
+  * auto_network (`vagrant plugin install vagrant-auto_network`)
 6. NodeJS(npm):
   For Ubuntu - http://tecadmin.net/install-latest-nodejs-npm-on-ubuntu/
   For OSX - `brew install node`
