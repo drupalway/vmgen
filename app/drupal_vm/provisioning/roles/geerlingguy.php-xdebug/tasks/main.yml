@@ -2,31 +2,34 @@
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+- name: Define php_xdebug_module_path.
+  set_fact:
+    php_xdebug_module_path: "{{ __php_xdebug_module_path }}"
+  when: php_xdebug_module_path is not defined
+
+- name: Define php_xdebug_config_filename.
+  set_fact:
+    php_xdebug_config_filename: "{{ __php_xdebug_config_filename }}"
+  when: php_xdebug_config_filename is not defined
+
 - name: Ensure dependencies for building from source are installed (RedHat).
-  yum: "pkg={{ item }} state=installed"
+  yum: "name={{ item }} state=installed"
   with_items:
-    - make
+    - '@development'
   when: ansible_os_family == 'RedHat'
 
 - name: Ensure dependencies for building from source are installed (Debian).
-  apt: "pkg={{ item }} state=installed"
+  apt: "name={{ item }} state=installed"
   with_items:
-    - make
+    - build-essential
   when: ansible_os_family == 'Debian'
 
-- name: Download Xdebug.
-  get_url:
-    url: "https://xdebug.org/files/xdebug-{{ php_xdebug_version }}.tgz"
-    dest: "{{ workspace }}/xdebug-{{ php_xdebug_version }}.tgz"
-
-# TODO: In 2.0, we can set the 'src' to the URL from the get_url task above and
-# cut out one extra task :)
 - name: Untar Xdebug.
   unarchive:
-    src: "{{ workspace }}/xdebug-{{ php_xdebug_version }}.tgz"
+    src: "https://xdebug.org/files/xdebug-{{ php_xdebug_version }}.tgz"
     dest: "{{ workspace }}"
+    creates: "{{ workspace }}/xdebug-{{ php_xdebug_version }}"
     copy: no
-
 
 - name: Build Xdebug.
   shell: >
@@ -37,7 +40,6 @@
     - phpize
     - ./configure
     - make
-  notify: restart webserver
 
 - name: Ensure Xdebug module path exists.
   file:
@@ -48,9 +50,10 @@
     mode: 0755
 
 - name: Move Xdebug module into place.
-  shell: >
-    cp {{ workspace }}/xdebug-{{ php_xdebug_version }}/modules/xdebug.so {{ php_xdebug_module_path }}/xdebug.so
-    creates={{ php_xdebug_module_path }}/xdebug.so
+  copy:
+    src: "{{ workspace }}/xdebug-{{ php_xdebug_version }}/modules/xdebug.so"
+    dest: "{{ php_xdebug_module_path }}/xdebug-{{ php_xdebug_version }}.so"
+    remote_src: True
   notify: restart webserver
 
 - include: configure.yml

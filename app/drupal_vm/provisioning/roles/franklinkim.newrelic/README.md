@@ -1,7 +1,7 @@
 # Ansible franklinkim.newrelic role
 
 [![Build Status](https://img.shields.io/travis/weareinteractive/ansible-newrelic.svg)](https://travis-ci.org/weareinteractive/ansible-newrelic)
-[![Galaxy](http://img.shields.io/badge/galaxy-franklinkim.apt-blue.svg)](https://galaxy.ansible.com/list#/roles/3917)
+[![Galaxy](http://img.shields.io/badge/galaxy-franklinkim.newrelic-blue.svg)](https://galaxy.ansible.com/franklinkim/newrelic/)
 [![GitHub Tags](https://img.shields.io/github/tag/weareinteractive/ansible-newrelic.svg)](https://github.com/weareinteractive/ansible-newrelic)
 [![GitHub Stars](https://img.shields.io/github/stars/weareinteractive/ansible-newrelic.svg)](https://github.com/weareinteractive/ansible-newrelic)
 
@@ -33,7 +33,7 @@ $ git clone https://github.com/weareinteractive/ansible-newrelic.git franklinkim
 
 ## Dependencies
 
-* Ansible >= 1.9
+* Ansible >= 2.0
 
 ## Variables
 
@@ -62,6 +62,14 @@ newrelic_disable_docker: yes
 newrelic_service_enabled: yes
 # current state: started, stopped
 newrelic_service_state: started
+# use default hostname, set a value to override the default hostname
+newrelic_override_hostname: ~
+# A series of label_type/label_value pairings: label_type:label_value
+newrelic_labels:
+# proxy server to use (i.e. proxy-host:8080)
+newrelic_proxy:
+# Option to fix Docker memory (see: https://discuss.newrelic.com/t/wrong-path-to-cpu-and-memoy-data/36177)
+newrelic_cgroup_style:
 
 ```
 
@@ -89,26 +97,26 @@ This is an example playbook:
 ---
 
 - hosts: all
-  sudo: yes
+  become: yes
   roles:
     - franklinkim.newrelic
   vars:
-    newrelic_license_key: yes
     newrelic_service_state: started
     newrelic_license_key: ab2fa361cd4d0d373833cad619d7bcc424d27c16
 
 ```
+
 
 ## Testing
 
 ```shell
 $ git clone https://github.com/weareinteractive/ansible-newrelic.git
 $ cd ansible-newrelic
-$ vagrant up
+$ make test
 ```
 
 ## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests and examples for any new or changed functionality.
+In lieu of a formal style guide, take care to maintain the existing coding style. Add unit tests and examples for any new or changed functionality.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)

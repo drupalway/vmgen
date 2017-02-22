@@ -7,27 +7,39 @@
     - ../default.config.yml
 
   pre_tasks:
+    - name: Include OS-specific variables.
+      include_vars: "{{ ansible_os_family }}.yml"
+
     - name: Define config_dir.
       set_fact:
         config_dir: "{{ playbook_dir }}/.."
       when: config_dir is not defined
+      tags: ['always']
 
     - include_vars: "{{ item }}"
       with_fileglob:
         - "{{ config_dir }}/config.yml"
         - "{{ config_dir }}/local.config.yml"
+        - "{{ config_dir }}/{{ lookup('env', 'DRUPALVM_ENV')|default(drupalvm_env, true)|default(ansible_env.DRUPALVM_ENV)|default(omit) }}.config.yml"
+      tags: ['always']
+
+    - include: tasks/hostname.yml
 
     - include: tasks/init-debian.yml
       when: ansible_os_family == 'Debian'
+      static: no
     - include: tasks/init-redhat.yml
       when: ansible_os_family == 'RedHat'
+      static: no
 
     - name: Run configured pre-provision shell scripts.
       script: "{{ item }}"
       with_items: "{{ pre_provision_scripts|default([]) }}"
 
     - name: Run configured pre-provision ansible task files.
-      include: "{{ item }}"
+      include: "{{ outer_item }}"
+      loop_control:
+        loop_var: outer_item
       with_fileglob:
         - "{{ pre_provision_tasks_dir|default(omit) }}"
 
@@ -35,6 +47,18 @@
       set_fact:
         php_webserver_daemon: nginx
       when: drupalvm_webserver == 'nginx'
+
+    - name: Set the correct XHProf package when PHP 5.5 or 5.6 is used.
+      set_fact:
+        xhprof_download_url: https://github.com/phacility/xhprof/archive/master.tar.gz
+        xhprof_download_folder_name: xhprof-master
+      when: php_version == '5.5' or php_version == '5.6'
+
+    - name: Ensure PHP version -specific workspace directory exists.
+      file:
+        path: "/root/php{{ php_version }}"
+        state: directory
+        mode: 0775
 
   roles:
     # Essential roles.
@@ -45,19 +69,31 @@
     - { role: geerlingguy.apache, when: drupalvm_webserver == 'apache' }
     - { role: geerlingguy.apache-php-fpm, when: drupalvm_webserver == 'apache' }
     - { role: geerlingguy.nginx, when: drupalvm_webserver == 'nginx' }
-    - geerlingguy.mysql
     - geerlingguy.php
     - geerlingguy.php-pecl
-    - geerlingguy.php-mysql
     - geerlingguy.composer
-    - geerlingguy.drush
+    - { role: geerlingguy.mysql, when: drupalvm_database == 'mysql' }
+    - { role: geerlingguy.php-mysql, when: drupalvm_database == 'mysql' }
+    - { role: geerlingguy.postgresql, when: drupalvm_database == 'pgsql' }
+    - { role: geerlingguy.php-pgsql, when: drupalvm_database == 'pgsql' }
 
     # Conditionally-installed roles.
     - { role: geerlingguy.drupal-console, when: 'drupal_major_version > 7 and "drupalconsole" in installed_extras' }
+    - { role: geerlingguy.drush, when: '"drush" in installed_extras' }
     - { role: geerlingguy.memcached, when: '"memcached" in installed_extras' }
     - { role: geerlingguy.php-memcached, when: '"memcached" in installed_extras' }
-    - { role: geerlingguy.php-xdebug, when: '"xdebug" in installed_extras' }
-    - { role: geerlingguy.php-xhprof, when: '"xhprof" in installed_extras' }
+    - role: geerlingguy.php-tideways
+      workspace: "/root/php{{ php_version }}"
+      when: '"tideways" in installed_extras'
+    - role: geerlingguy.php-xdebug
+      workspace: "/root/php{{ php_version }}"
+      when: '"xdebug" in installed_extras'
+    - role: geerlingguy.php-xhprof
+      workspace: "/root/php{{ php_version }}"
+      when: '"xhprof" in installed_extras'
+    - role: thom8.php-upload-progress
+      workspace: "/root/php{{ php_version }}"
+      when: '"upload-progress" in installed_extras'
     - { role: geerlingguy.blackfire, when: '"blackfire" in installed_extras' }
     - { role: geerlingguy.adminer, when: '"adminer" in installed_extras' }
     - { role: geerlingguy.pimpmylog, when: '"pimpmylog" in installed_extras' }
@@ -68,7 +104,12 @@
     - { role: geerlingguy.redis, when: '"redis" in installed_extras' }
     - { role: geerlingguy.php-redis, when: '"redis" in installed_extras' }
     - { role: geerlingguy.ruby, when: '"ruby" in installed_extras' }
-    - { role: geerlingguy.java, when: '"solr" in installed_extras or "selenium" in installed_extras or "elasticsearch" in installed_extras'}
+    - role: geerlingguy.java
+      when: >
+        "java" in installed_extras or
+        "solr" in installed_extras or
+        "selenium" in installed_extras or
+        "elasticsearch" in installed_extras
     - { role: arknoll.selenium, when: '"selenium" in installed_extras' }
     - { role: geerlingguy.solr, when: '"solr" in installed_extras' }
     - { role: geerlingguy.elasticsearch, when: '"elasticsearch" in installed_extras' }
@@ -91,7 +132,7 @@
     - include: tasks/extras.yml
     - include: tasks/www.yml
     - include: tasks/apparmor.yml
-      when: ansible_os_family == 'Debian'
+      when: ansible_os_family == 'Debian' and drupalvm_database == 'mysql'
 
     # Build makefile if configured.
     - include: tasks/build-makefile.yml
@@ -104,6 +145,16 @@
     # Build a composer project if configured.
     - include: tasks/build-composer-project.yml
       when: build_composer_project
+
+    - name: Check if a project specific Drush binary exists.
+      stat: "path={{ drupal_composer_install_dir }}/vendor/drush/drush/drush"
+      register: drush_vendor_bin
+      ignore_errors: true
+
+    - name: Use project specific Drush if available.
+      set_fact:
+        drush_path: "{{ drupal_composer_install_dir }}/vendor/drush/drush/drush"
+      when: drush_vendor_bin.stat.exists
 
     # Install site if configured.
     - include: tasks/install-site.yml
@@ -120,6 +171,8 @@
       with_items: "{{ post_provision_scripts|default([]) }}"
 
     - name: Run configured post-provision ansible task files.
-      include: "{{ item }}"
+      include: "{{ outer_item }}"
+      loop_control:
+        loop_var: outer_item
       with_fileglob:
         - "{{ post_provision_tasks_dir|default(omit) }}"

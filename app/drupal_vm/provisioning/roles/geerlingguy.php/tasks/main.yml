@@ -8,6 +8,11 @@
     php_packages: "{{ __php_packages | list }}"
   when: php_packages is not defined
 
+- name: Define extra php_packages.
+  set_fact:
+    php_packages: "{{ php_packages | list + php_packages_extra | list }}"
+  when: php_packages_extra is defined
+
 - name: Define php_webserver_daemon.
   set_fact:
     php_webserver_daemon: "{{ __php_webserver_daemon }}"
@@ -46,16 +51,23 @@
 # Setup/install tasks.
 - include: setup-RedHat.yml
   when: (php_install_from_source == false) and (ansible_os_family == 'RedHat')
+  static: no
 
 - include: setup-Debian.yml
   when: (php_install_from_source == false) and (ansible_os_family == 'Debian')
+  static: no
 
 # Install PHP from source when php_install_from_source is true.
 - include: install-from-source.yml
   when: php_install_from_source == true
+  static: no
 
 # Configure PHP.
 - include: configure.yml
+  static: no
 - include: configure-apcu.yml
+  static: no
 - include: configure-opcache.yml
+  static: no
 - include: configure-fpm.yml
+  static: no

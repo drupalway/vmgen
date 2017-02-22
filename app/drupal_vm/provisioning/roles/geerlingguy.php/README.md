@@ -18,6 +18,10 @@ A list of the PHP packages to install (OS-specific by default). You'll likely wa
 
 _Note: If you're using Debian/Ubuntu, you also need to install `libapache2-mod-fastcgi` (for cgi/PHP-FPM) or `libapache2-mod-php7.0` (or a similar package depending on PHP version) if you want to use `mod_php` with Apache._
 
+    php_packages_extra: []
+
+A list of extra PHP packages to install without overriding the default list.
+
     php_enable_webserver: true
 
 If your usage of PHP is tied to a web server (e.g. Apache or Nginx), leave this default value. If you are using PHP server-side or to run some small application, set this value to `false` so this role doesn't attempt to interact with a web server.
@@ -33,6 +37,10 @@ The default values for the HTTP server deamon are `httpd` (used by Apache) for R
     php_packages_state: "installed"
 
 If you have enabled any additional repositories such as [geerlingguy.repo-epel](https://github.com/geerlingguy/ansible-role-repo-epel) or [geerlingguy.repo-remi](https://github.com/geerlingguy/ansible-role-repo-remi), you may want an easy way to swap PHP versions on the fly. By default, this is set to 'installed'. You can now override this variable to 'latest'. Combined with php_enablerepo, a user now doesn't need to manually uninstall the existing PHP packages before installing them from a different repository.
+
+    php_install_recommends: yes
+
+(Debian/Ubuntu only) Whether to install recommended packages when installing `php_packages`; you might want to set this to `no` explicitly if you're installing a PPA that recommends certain packages you don't want (e.g. Ondrej's `php` PPA will install `php7.0-cli` if you install `php-pear` alongside `php5.6-cli`... which is often not desired!).
 
     php_executable: "php"
 
@@ -85,6 +93,7 @@ By default, all the extra defaults below are applied through the php.ini include
     php_session_gc_maxlifetime: 1440
     php_session_save_handler: files
     php_session_save_path: ''
+    php_disable_functions: []
 
 Various defaults for PHP. Only used if `php_use_managed_ini` is set to `true`.
 
@@ -92,6 +101,7 @@ Various defaults for PHP. Only used if `php_use_managed_ini` is set to `true`.
 
 The OpCache is included in PHP starting in version 5.5, and the following variables will only take effect if the version of PHP you have installed is 5.5 or greater.
 
+    php_opcache_zend_extension: "opcache.so"
     php_opcache_enable: "1"
     php_opcache_enable_cli: "0"
     php_opcache_memory_consumption: "96"
@@ -104,6 +114,8 @@ The OpCache is included in PHP starting in version 5.5, and the following variab
     php_opcache_max_file_size: "0"
 
 OpCache ini directives that are often customized on a system. Make sure you have enough memory and file slots allocated in the OpCache (`php_opcache_memory_consumption`, in MB, and `php_opcache_max_accelerated_files`) to contain all the PHP code you are running. If not, you may get less-than-optimal performance!
+
+For custom opcache.so location provide full path with `php_opcache_zend_extension`.
 
     php_opcache_conf_filename: [platform-specific]
 
@@ -146,6 +158,7 @@ Set this to `true` to install PHP from source instead of installing from package
 The version of PHP to install from source (a git branch, tag, or commit hash).
 
     php_source_clone_dir: "~/php-src"
+    php_source_clone_depth: 1
     php_source_install_path: "/opt/php"
     php_source_install_gmp_path: "/usr/include/x86_64-linux-gnu/gmp.h"
 
@@ -201,4 +214,4 @@ MIT / BSD
 
 ## Author Information
 
-This role was created in 2014 by [Jeff Geerling](http://jeffgeerling.com/), author of [Ansible for DevOps](http://ansiblefordevops.com/).
+This role was created in 2014 by [Jeff Geerling](http://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).

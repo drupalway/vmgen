@@ -2,6 +2,9 @@
 # Used only for Debian/Ubuntu installation, as the -t option for apt.
 nginx_default_release: ""
 
+# Used only for Redhat installation, enables source Nginx repo.
+nginx_yum_repo_enabled: true
+
 # Use the official Nginx PPA for Ubuntu, and the version to use if so.
 nginx_ppa_use: false
 nginx_ppa_version: stable
@@ -9,7 +12,7 @@ nginx_ppa_version: stable
 # The name of the nginx apt/yum package to install.
 nginx_package_name: "nginx"
 
-nginx_worker_processes: "1"
+nginx_worker_processes: "{{ ansible_processor_vcpus | default(ansible_processor_count) }}"
 nginx_worker_connections: "1024"
 nginx_multi_accept: "off"
 
@@ -22,6 +25,8 @@ nginx_tcp_nodelay: "on"
 
 nginx_keepalive_timeout: "65"
 nginx_keepalive_requests: "100"
+
+nginx_server_tokens: "on"
 
 nginx_client_max_body_size: "64m"
 
@@ -45,6 +50,7 @@ nginx_extra_http_options: ""
 #      proxy_set_header   Host $http_host;
 
 nginx_remove_default_vhost: false
+nginx_vhosts_filename: "vhosts.conf"
 nginx_vhosts: []
 # Example vhost below, showing all available options:
 # - listen: "80 default_server" # default: "80 default_server"
@@ -61,8 +67,14 @@ nginx_vhosts: []
 nginx_upstreams: []
 # - name: myapp1
 #   strategy: "ip_hash" # "least_conn", etc.
+#   keepalive: 16 # optional
 #   servers: {
 #     "srv1.example.com",
 #     "srv2.example.com weight=3",
 #     "srv3.example.com"
 #   }
+
+nginx_log_format: |
+  '$remote_addr - $remote_user [$time_local] "$request" '
+  '$status $body_bytes_sent "$http_referer" '
+  '"$http_user_agent" "$http_x_forwarded_for"'

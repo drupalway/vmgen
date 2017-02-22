@@ -1,7 +1,7 @@
 {
   "name": "vmgen",
   "version": "1.0.2",
-  "description": "Lightweight VM generator for Drupal development",
+  "description": "Lightweight VM config generator for Drupal development",
   "main": "app/scripts/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,15 +9,15 @@
   "bin": {
     "vmgen": "app/scripts/index.js"
   },
-  "repositoty": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/drupalway/vmgen.git"
   },
   "author": "Valentine Matsveiko",
   "license": "GPL-3.0",
   "dependencies": {
-    "commander": "^2.9.0",
-    "fs-extra": "^0.30.0",
-    "wrench": "^1.5.9"
+    "fs": "0.0.2",
+    "commander": "2.9.0",
+    "fs-extra": "0.30.0"
   }
 }

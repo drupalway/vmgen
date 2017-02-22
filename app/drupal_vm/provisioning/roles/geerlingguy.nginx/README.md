@@ -28,18 +28,24 @@ A list of vhost definitions (server blocks) for Nginx virtual hosts. If left emp
         error_log: ""
         extra_parameters: |
           location ~ \.php$ {
-            fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            fastcgi_pass unix:/var/run/php5-fpm.sock;
-            fastcgi_index index.php;
-            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-            include fastcgi_params;
+              fastcgi_split_path_info ^(.+\.php)(/.+)$;
+              fastcgi_pass unix:/var/run/php5-fpm.sock;
+              fastcgi_index index.php;
+              fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+              include fastcgi_params;
           }
 
 An example of a fully-populated nginx_vhosts entry, using a `|` to declare a block of syntax for the `extra_parameters`.
 
+Please take note of the indentation in the above block. The first line should be a normal 2-space indent. All other lines should be indented normally relative to that line. In the generated file, the entire block will be 4-space indented. This style will ensure the config file is indented correctly.
+
     nginx_remove_default_vhost: false
 
 Whether to remove the 'default' virtualhost configuration supplied by Nginx. Useful if you want the base `/` URL to be directed at one of your own virtual hosts configured in a separate .conf file.
+
+    nginx_vhosts_filename: "vhosts.conf"
+
+The filename to use to store vhosts configuration. If you run the role multiple times (e.g. include the role with `with_items`), you can change the name for each run, effectively creating a separate vhosts file per vhost configuration.
 
     nginx_upstreams: []
 
@@ -49,11 +55,11 @@ If you are configuring Nginx as a load balancer, you can define one or more upst
 
 The user under which Nginx will run. Defaults to `nginx` for RedHat, and `www-data` for Debian.
 
-    nginx_worker_processes: "1"
+    nginx_worker_processes: "{{ ansible_processor_vcpus|default(ansible_processor_count) }}"
     nginx_worker_connections: "1024"
     nginx_multi_accept: "off"
 
-`nginx_worker_processes` should be set to the number of cores present on your machine. Connections (find this number with `grep processor /proc/cpuinfo | wc -l`). `nginx_worker_connections` is the number of connections per process. Set this higher to handle more simultaneous connections (and remember that a connection will be used for as long as the keepalive timeout duration for every client!). You can set `nginx_multi_accept` to `on` if you want Nginx to accept all connections immediately.
+`nginx_worker_processes` should be set to the number of cores present on your machine (if the default is incorrect, find this number with `grep processor /proc/cpuinfo | wc -l`). `nginx_worker_connections` is the number of connections per process. Set this higher to handle more simultaneous connections (and remember that a connection will be used for as long as the keepalive timeout duration for every client!). You can set `nginx_multi_accept` to `on` if you want Nginx to accept all connections immediately.
 
     nginx_error_log: "/var/log/nginx/error.log warn"
     nginx_access_log: "/var/log/nginx/access.log main buffer=16k"
@@ -70,6 +76,10 @@ TCP connection options. See [this blog post](https://t37.net/nginx-optimization-
     nginx_keepalive_requests: "100"
 
 Nginx keepalive settings. Timeout should be set higher (10s+) if you have more polling-style traffic (AJAX-powered sites especially), or lower (<10s) if you have a site where most users visit a few pages and don't send any further requests.
+
+    nginx_server_tokens: "on"
+
+Nginx server_tokens settings. Controls whether nginx responds with it's version in HTTP headers. Set to `"off"` to disable.
 
     nginx_client_max_body_size: "64m"
 
@@ -94,6 +104,13 @@ Extra lines to be inserted in the top-level `http` block in `nginx.conf`. The va
       proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header   Host $http_host;
 
+    nginx_log_format: |
+      '$remote_addr - $remote_user [$time_local] "$request" '
+      '$status $body_bytes_sent "$http_referer" '
+      '"$http_user_agent" "$http_x_forwarded_for"'
+
+Configures Nginx's [`log_format`](http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format). options.
+
     nginx_default_release: ""
 
 (For Debian/Ubuntu only) Allows you to set a different repository for the installation of Nginx. As an example, if you are running Debian's wheezy release, and want to get a newer version of Nginx, you can install the `wheezy-backports` repository and set that value here, and Ansible will use that as the `-t` option while installing Nginx.
@@ -102,6 +119,10 @@ Extra lines to be inserted in the top-level `http` block in `nginx.conf`. The va
     nginx_ppa_version: stable
 
 (For Ubuntu only) Allows you to use the official Nginx PPA instead of the system's package. You can set the version to `stable` or `development`.
+
+    nginx_yum_repo_enabled: true
+
+(For RedHat/CentOS only) Set this to `false` to disable the installation of the `nginx` yum repository. This could be necessary if you want the default OS stable packages, or if you use Satellite.
 
 ## Dependencies
 
@@ -119,4 +140,4 @@ MIT / BSD
 
 ## Author Information
 
-This role was created in 2014 by [Jeff Geerling](http://jeffgeerling.com/), author of [Ansible for DevOps](http://ansiblefordevops.com/).
+This role was created in 2014 by [Jeff Geerling](https://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).

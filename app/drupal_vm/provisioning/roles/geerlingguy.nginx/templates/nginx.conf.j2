@@ -22,9 +22,7 @@ http {
 
     client_max_body_size {{ nginx_client_max_body_size }};
 
-    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                      '$status $body_bytes_sent "$http_referer" '
-                      '"$http_user_agent" "$http_x_forwarded_for"';
+    log_format  main  {{ nginx_log_format|indent(23) }};
 
     access_log  {{ nginx_access_log }};
 
@@ -35,6 +33,7 @@ http {
     keepalive_timeout  {{ nginx_keepalive_timeout }};
     keepalive_requests {{ nginx_keepalive_requests }};
 
+    server_tokens {{ nginx_server_tokens }};
     #gzip  on;
 
 {% if nginx_proxy_cache_path %}
@@ -42,7 +41,7 @@ http {
 {% endif %}
 
 {% if nginx_extra_http_options %}
-    {{ nginx_extra_http_options }}
+    {{ nginx_extra_http_options|indent(4, False) }}
 {% endif %}
 
 {% for upstream in nginx_upstreams %}
@@ -53,6 +52,9 @@ http {
 {% for server in upstream.servers %}
         server {{ server }};
 {% endfor %}
+{% if upstream.keepalive is defined %}
+        keepalive {{ upstream.keepalive }};
+{% endif %}
     }
 {% endfor %}
 

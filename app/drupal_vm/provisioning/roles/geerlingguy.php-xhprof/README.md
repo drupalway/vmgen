@@ -4,6 +4,8 @@
 
 Installs PHP [XHProf](http://php.net/manual/en/book.xhprof.php) on Linux servers.
 
+> **Note**: The XHProf extension has been on life support since Facebook abandoned active development around 2015. There is a better-maintained fork that works on the latest PHP versions called Tideways, and there's an Ansible role for it—please check out [`geerlingguy.php-tideways`](https://github.com/geerlingguy/ansible-role-php-tideways) if you need to support PHP versions later than 7.0.
+
 ## Requirements
 
 None.
@@ -49,4 +51,4 @@ MIT / BSD
 
 ## Author Information
 
-This role was created in 2014 by [Jeff Geerling](http://jeffgeerling.com/), author of [Ansible for DevOps](http://ansiblefordevops.com/).
+This role was created in 2014 by [Jeff Geerling](http://www.jeffgeerling.com/), author of [Ansible for DevOps](https://www.ansiblefordevops.com/).
