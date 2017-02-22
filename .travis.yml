@@ -1,6 +1,8 @@
 ---
 language: python
 python: "2.7"
+node_js:
+  - "7"
 
 sudo: required
 dist: xenial
@@ -8,6 +10,11 @@ dist: xenial
 before_install:
   # Update APT caches.
   - sudo apt-get update
+  -  sudo apt-get purge postgr*
+  -  sudo apt-get purge virtualbox*
+  -  sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
+  -  sudo apt-get -y install build-essential
+  -  sudo apt-get -y --force-yes install linux-headers-`uname -r`
   # Install Ansible.
   - pip install ansible
   - ansible --version
@@ -22,12 +29,6 @@ before_install:
   # Install vagrant plugins.
   - vagrant plugin install vagrant-hostsupdater
   - vagrant plugin install vagrant-auto_network
-  # Install node.
-  - sudo apt-get install python-software-properties
-  - curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
-  - sudo apt-get install nodejs
-  - node -v
-  - npm -v
 
 install:
   - echo "Package installation will be here..."
