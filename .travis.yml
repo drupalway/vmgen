@@ -30,7 +30,7 @@ before_install:
   - vagrant plugin install vagrant-auto_network
 
 install:
-  - node install -g vmgen
+  - npm install -g vmgen
 before_script:
   - mkdir ~/projects/test/docroot
 script:
