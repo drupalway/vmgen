@@ -1,5 +1,7 @@
 VM generator powered by Vagrant, Ansible, Node.js and DrupalVM
 ==============================================================
+[![Build Status](https://travis-ci.org/drupalway/vmgen.svg?branch=create_tests)](https://travis-ci.org/drupalway/vmgen)
+
 # Description
 A node.js based generator to simplify the creation of VM instance for Drupal development using Vagrant, Ansible, and DrupalVM.
 
