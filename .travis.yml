@@ -10,11 +10,8 @@ dist: xenial
 before_install:
   # Update APT caches.
   - sudo apt-get update
-  -  sudo apt-get purge postgr*
-  -  sudo apt-get purge virtualbox*
-  -  sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-  -  sudo apt-get -y install build-essential
-  -  sudo apt-get -y --force-yes install linux-headers-`uname -r`
+  # Install some system dependencies.
+  - sudo apt-get install libdevmapper1.02.1 libqt5core5a libqt5gui5 libqt5opengl5 libqt5printsupport5 libstdc++6 libvpx3
   # Install Ansible.
   - pip install ansible
   - ansible --version
