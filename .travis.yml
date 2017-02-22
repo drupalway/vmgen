@@ -18,7 +18,7 @@ before_install:
   - sudo apt-get install build-essential dkms unzip
   - wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
   - sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian trusty contrib" >> /etc/apt/sources.list.d/virtualbox.list'
-  - sudo apt-get install virtualbox-5.1
+  - sudo apt-get install virtualbox
   # Install Ansible.
   #- pip install ansible
   #- ansible --version
