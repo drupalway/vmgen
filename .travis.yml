@@ -12,6 +12,7 @@ before_install:
   - sudo apt-get update
   # Install some system dependencies.
   - sudo apt-get install build-essential dkms unzip linux-headers-4.4.0-51-generic
+  # Install VirtualBox.
   - wget http://download.virtualbox.org/virtualbox/5.1.14/virtualbox-5.1_5.1.14-112924~Ubuntu~trusty_amd64.deb
   - sudo dpkg -i virtualbox-5.1_5.1.14-112924~Ubuntu~trusty_amd64.deb
   # Install Ansible.
@@ -26,12 +27,17 @@ before_install:
   - vagrant plugin install vagrant-auto_network
 
 install:
+  # Install this package.
   - npm install -g vmgen
 before_script:
+  # Create required directories structure.
   - mkdir ~/projects
   - mkdir ~/projects/test
   - mkdir ~/projects/test/docroot
 script:
+  # Run VM generator.
   - cd ~/projects/test && vmgen test 7
+  # Check if directory vm has been created.
   - ls -l ~/projects/test
+  # Check if all files under vm directory exists.
   - ls -l ~/projects/test/vm
