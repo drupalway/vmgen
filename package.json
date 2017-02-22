@@ -1,6 +1,6 @@
 {
   "name": "vmgen",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Lightweight VM config generator for Drupal development",
   "main": "app/scripts/index.js",
   "scripts": {
