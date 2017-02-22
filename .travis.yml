@@ -15,21 +15,24 @@ before_install:
   - sudo add-apt-repository multiverse
   - sudo apt-get update
   # Install some system dependencies.
-  - sudo apt-get install libdevmapper1.02.1 libqt5core5a libqt5gui5 libqt5opengl5 libqt5printsupport5 libstdc++6 libvpx3
+  - sudo apt-get install build-essential dkms unzip
+  - wget -q http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc -O- | sudo apt-key add -
+  - sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian xenial contrib" >> /etc/apt/sources.list.d/virtualbox.list'
+  - sudo apt-get install virtualbox-5.0
   # Install Ansible.
-  - pip install ansible
-  - ansible --version
+  #- pip install ansible
+  #- ansible --version
   # Install VirtualBox.
-  - wget http://download.virtualbox.org/virtualbox/5.1.14/virtualbox-5.1_5.1.14-112924~Ubuntu~xenial_amd64.deb
-  - sudo apt-get install libqt5x11extras5 -y
-  - sudo dpkg -i virtualbox-5.1_5.1.14-112924~Ubuntu~xenial_amd64.deb
+  #- wget http://download.virtualbox.org/virtualbox/5.1.14/virtualbox-5.1_5.1.14-112924~Ubuntu~xenial_amd64.deb
+  #- sudo apt-get install libqt5x11extras5 -y
+  #- sudo dpkg -i virtualbox-5.1_5.1.14-112924~Ubuntu~xenial_amd64.deb
   # Install Vagrant.
-  - wget https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb
-  - sudo dpkg -i vagrant_1.9.1_x86_64.deb
-  - vagrant -v
+  #- wget https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb
+  #- sudo dpkg -i vagrant_1.9.1_x86_64.deb
+  #- vagrant -v
   # Install vagrant plugins.
-  - vagrant plugin install vagrant-hostsupdater
-  - vagrant plugin install vagrant-auto_network
+  #- vagrant plugin install vagrant-hostsupdater
+  #- vagrant plugin install vagrant-auto_network
 
 install:
   - echo "Package installation will be here..."
