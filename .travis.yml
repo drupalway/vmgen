@@ -13,8 +13,8 @@ before_install:
   - ansible --version
   # Install VirtualBox.
   - wget http://download.virtualbox.org/virtualbox/5.1.14/virtualbox-5.1_5.1.14-112924~Ubuntu~xenial_amd64.deb
-  - sudo apt-get install 
-  - sudo dpkg -i vagrant_1.9.1_x86_64.deb
+  - sudo apt-get install
+  - sudo dpkg -i virtualbox-5.1_5.1.14-112924~Ubuntu~xenial_amd64.deb
   # Install Vagrant.
   - wget https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb
   - sudo dpkg -i vagrant_1.9.1_x86_64.deb
