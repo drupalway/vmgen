@@ -32,7 +32,9 @@ before_install:
 install:
   - npm install -g vmgen
 before_script:
-  - mkdir ~/projects/test/docroot
+  - mkdir -f ~/projects
+  - mkdir -f  ~/projects/test
+  - mkdir -f ~/projects/test/docroot
 script:
   - cd ~/projects/test && vmgen test 7
   - ls -l ~/projects/test
