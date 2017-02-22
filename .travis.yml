@@ -9,9 +9,13 @@ dist: xenial
 
 before_install:
   # Update APT caches.
+  - sudo add-apt-repository main
+  - sudo add-apt-repository universe
+  - sudo add-apt-repository restricted
+  - sudo add-apt-repository multiverse
   - sudo apt-get update
   # Install some system dependencies.
-  - sudo apt-get install libdevmapper1.02.1 libqt5core5a libqt5gui5 libqt5opengl5 libqt5printsupport5 libstdc++6
+  - sudo apt-get install libdevmapper1.02.1 libqt5core5a libqt5gui5 libqt5opengl5 libqt5printsupport5 libstdc++6 libvpx3
   # Install Ansible.
   - pip install ansible
   - ansible --version
