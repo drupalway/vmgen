@@ -30,8 +30,10 @@ before_install:
   - vagrant plugin install vagrant-auto_network
 
 install:
-  - echo "Package installation will be here..."
+  - node install -g vmgen
 before_script:
-  - echo "Directory preparation will be here..."
+  - mkdir ~/projects/test/docroot
 script:
-  - echo "test...tbd"
+  - cd ~/projects/test && vmgen test 7
+  - ls -l ~/projects/test
+  - ls -l ~/projects/test/vm
