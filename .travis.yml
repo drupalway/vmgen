@@ -11,7 +11,7 @@ before_install:
   # Update APT caches.
   - sudo apt-get update
   # Install some system dependencies.
-  - sudo apt-get install libdevmapper1.02.1 libqt5core5a libqt5gui5 libqt5opengl5 libqt5printsupport5 libstdc++6 libvpx3
+  - sudo apt-get install libdevmapper1.02.1 libqt5core5a libqt5gui5 libqt5opengl5 libqt5printsupport5 libstdc++6
   # Install Ansible.
   - pip install ansible
   - ansible --version
