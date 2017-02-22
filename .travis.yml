@@ -1,0 +1,36 @@
+---
+language: python
+python: "2.7"
+
+sudo: required
+dist: xenial
+
+before_install:
+  # Install Ansible.
+  - pip install ansible
+  - ansible --version
+  # Install VirtualBox.
+  - sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian xenial contrib" >> /etc/apt/sources.list.d/virtualbox.list'
+  - wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+  - sudo apt update
+  - sudo apt install virtualbox-5.1
+  # Install Vagrant.
+  - wget https://releases.hashicorp.com/vagrant/1.9.1/vagrant_1.9.1_x86_64.deb
+  - dpkg -i vagrant_1.9.1_x86_64.deb
+  - vagrant -v
+  # Install vagrant plugins.
+  - vagrant plugin install vagrant-hostsupdater
+  - vagrant plugin install vagrant-auto_network
+  # Install node.
+  - sudo apt-get install python-software-properties
+  - curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+  - sudo apt-get install nodejs
+  - node -v
+  - npm -v
+
+install:
+  - echo "Package installation will be here..."
+before_script:
+  - echo "Directory preparation will be here..."
+
+script:
